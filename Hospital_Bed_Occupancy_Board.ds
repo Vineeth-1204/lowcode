@@ -1,0 +1,672 @@
+/*
+ * Author       : vineeth.p.2024.cse_rajala63
+ * Generated on : 10-Nov-2026 21:41:42
+ * Version      : 1.0
+ */
+ application "Hospital Bed Occupancy Board"
+ {
+ 	date format = "dd-MMM-yyyy"
+ 	time zone = "Asia/Kolkata"
+ 	time format = "24-hr"
+
+ 	forms
+	{
+		form Admission
+		{
+			success message = "Admission Added Successfully"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			Single_Line
+			(
+    			type = text
+				displayname = "Single Line"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Patient_Name
+			(
+    			type = text
+				displayname = "Patient Name"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Ward
+			(
+				type = picklist
+				maxchar = 100
+				values = {"ICU","Paediatric","Maternity","general"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Expected_Discharge
+			(
+    			type = date
+				displayname = "Expected Discharge"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Status
+			(
+				type = picklist
+				maxchar = 100
+				values = {"Discharged","Transferred","Admitted"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Bed_No
+			(
+    			type = text
+				displayname = "Bed Number"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Attending_Doctor
+			(
+    			type = text
+				displayname = "Attending Doctor"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Actual_Discharge
+			(
+    			type = date
+				displayname = "Actual Discharge"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			must have Admitted_On
+			(
+    			type = datetime
+				displayname = "Admitted On"
+				timedisplayoptions = "hh:mm:ss"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+	}
+	reports
+	{
+		default list All_Admissions
+		{
+			displayName = "All Admissions"
+			show all rows from Admission    
+			(
+				Single_Line as "Single Line"
+				Patient_Name as "Patient Name"
+				Ward
+				Expected_Discharge as "Expected Discharge"
+				Status
+				Bed_No as "Bed Number"
+				Attending_Doctor as "Attending Doctor"
+				Actual_Discharge as "Actual Discharge"
+				Admitted_On as "Admitted On"
+			)
+		}
+		kanban Ward_Board
+		{
+			displayName = "Ward Board"
+			show all rows from Admission    
+			(
+				Single_Line as "Single Line"
+				Patient_Name as "Patient Name"
+				Ward
+				Expected_Discharge as "Expected Discharge"
+				Status
+				Bed_No as "Bed Number"
+				Attending_Doctor as "Attending Doctor"
+				Actual_Discharge as "Actual Discharge"
+			)
+			options
+			(
+	 			display field = Ward
+	 		)
+		}
+		calendar Expected_Discharge_Calendar
+		{
+			displayName = "Expected Discharge Calendar"
+			show all rows from Admission    
+			(
+				Single_Line as "Single Line"
+				Patient_Name as "Patient Name"
+				Ward
+				Expected_Discharge as "Expected Discharge"
+				Status
+				Bed_No as "Bed Number"
+				Attending_Doctor as "Attending Doctor"
+				Actual_Discharge as "Actual Discharge"
+			)
+			options
+			(
+				display field = Patient_Name
+				start date = Expected_Discharge
+			)
+		}
+		pivotchart Ward_Occupancy_Pivot
+		{
+			displayname = "Ward Occupancy Pivot"
+			based on Autoview_1793349136120_Admission
+				show all rows from Admission
+				(
+			Single_Line  as "Single Line"
+			Patient_Name  as "Patient Name"
+			Ward 
+			Expected_Discharge  as "Expected Discharge"
+			Status 
+			Bed_No  as "Bed Number"
+			Attending_Doctor  as "Attending Doctor"
+				)
+		}
+	}
+	pages
+	{
+		page Occupancy_Dashboard
+		{
+			displayname = "Occupancy Dashboard"
+			Content="<zml    \t\t\n\t\t\n\t\t\n\t\t\n\t\t\n>\n\t<layout>\n\t<row>\n\t<column\n   \t\t width='100%'\n   \t>\n\t<report \n\telementName='Report'\n\n\t\tappLinkName = 'thisapp'\n\t\tlinkName = 'Ward_Board'\n\t\n\t\tiszreport = 'false'\n\theightType = 'auto'\n\theightValue = '700'\n/>\n</column>\n</row><row>\n\t<column\n   \t\t width='100%'\n   \t>\n\t<report \n\telementName='Report 1'\n\n\t\tappLinkName = 'thisapp'\n\t\tlinkName = 'Ward_Occupancy_Pivot'\n\t\n\t\tiszreport = 'true'\n\theightType = 'auto'\n\theightValue = '700'\n/>\n</column>\n</row>\n</layout>\n</zml>"
+		}
+	}
+
+
+
+
+	share_settings
+	{
+			"Read"
+			{
+				name = "Read"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have read permission for all components\n"
+			}
+			"Write"
+			{
+				name = "Write"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have write permission for all components\n"
+			}
+			"Developer"
+			{
+				name = "Developer"
+				type = Developer
+				permissions = {Chat:false, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "Developer Profile\n"
+			}
+			"Administrator"
+			{
+				name = "Administrator"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have all the permissions.\n"
+			}
+			"Customer"
+			{
+				name = "Customer"
+				type = Customer_Portal
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This is the default profile having only add and view permission.\n"
+			}
+			roles
+			{
+				"CEO"
+				{
+					description = "User belonging to this role can access data of all other users."
+				}
+			}
+	}
+
+	customize
+	{
+		icon
+		{
+			text = "HBO"
+			background color = "theme"
+			foreground color = "#ffffff"
+		}
+	}
+
+	web
+	{
+		forms
+		{
+			form Admission
+			{
+				label placement = left
+			}
+		}
+		reports
+		{
+			report All_Admissions
+			{
+				quickview
+				(
+					layout
+					(
+						datablock1
+						(
+							fields
+							(
+								Single_Line as "Single Line"
+								Patient_Name as "Patient Name"
+								Ward
+								Expected_Discharge as "Expected Discharge"
+								Status
+								Bed_No as "Bed Number"
+								Attending_Doctor as "Attending Doctor"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit 
+								Duplicate 
+								Delete 
+							)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+						)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+						datablock1
+						(
+							fields
+							(
+								Single_Line as "Single Line"
+								Patient_Name as "Patient Name"
+								Ward
+								Expected_Discharge as "Expected Discharge"
+								Status
+								Bed_No as "Bed Number"
+								Attending_Doctor as "Attending Doctor"
+								Actual_Discharge as "Actual Discharge"
+								Admitted_On as "Admitted On"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit 
+								Duplicate 
+								Delete 
+							)
+						)
+				)
+			}
+			report Ward_Board
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = 1
+							fields
+							(
+								Single_Line as "Single Line"
+								Patient_Name as "Patient Name"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit 
+								Duplicate 
+								Delete 
+							)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+						)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+						datablock1
+						(
+							fields
+							(
+								Single_Line as "Single Line"
+								Patient_Name as "Patient Name"
+								Ward
+								Expected_Discharge as "Expected Discharge"
+								Status
+								Bed_No as "Bed Number"
+								Attending_Doctor as "Attending Doctor"
+								Actual_Discharge as "Actual Discharge"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit 
+								Duplicate 
+								Delete 
+							)
+						)
+				)
+			}
+			report Expected_Discharge_Calendar
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = 1
+							fields
+							(
+								Single_Line as "Single Line"
+								Patient_Name as "Patient Name"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+							)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+						)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+						datablock1
+						(
+							fields
+							(
+								Single_Line as "Single Line"
+								Patient_Name as "Patient Name"
+								Ward
+								Expected_Discharge as "Expected Discharge"
+								Status
+								Bed_No as "Bed Number"
+								Attending_Doctor as "Attending Doctor"
+								Actual_Discharge as "Actual Discharge"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit 
+								Duplicate 
+								Delete 
+							)
+						)
+				)
+			}
+		}
+		menu
+		{
+			space Space
+			{
+				displayname = "Space"
+				icon = "objects-spaceship"
+
+				section Occupancy_Dashboard
+				{
+					displayname = "Occupancy Dashboard"
+					icon = "ui-1-dashboard-half"
+					page Occupancy_Dashboard
+					{
+						icon = "ui-1-dashboard-half"
+					}
+				}
+				section Admissions
+				{
+					displayname = "Admissions"
+					icon = "education-hat"
+					form  Admission
+					{
+						icon = "clothes-tie-bow"
+					}
+					report All_Admissions
+					{
+						icon = "tech-desktop"
+					}
+					report Ward_Board
+					{
+						icon = "clothes-tie-bow"
+					}
+					report Expected_Discharge_Calendar
+					{
+						icon = "clothes-tie-bow"
+					}
+ 
+					report Ward_Occupancy_Pivot
+					{
+						icon = "clothes-tie-bow"
+					}
+				}
+				section ZC_App_Preferences
+				{
+					displayname = "App Preferences"
+					icon = "design-app"
+					systemcomponent
+					{
+						type = localization
+						displayname = "Language Selection"
+						icon = "education-language"
+					}
+					systemcomponent
+					{
+						type = connection
+						displayname = "Integrations"
+						icon = "tech-2-connection"
+					}
+				}
+				section ZC_Approvals
+				{
+					displayname = "Approvals"
+					icon = "ui-2-hourglass"
+					systemcomponent
+					{
+						type = approval
+						approval status = pending
+						displayname = "Pending Tasks"
+						icon = "ui-2-hourglass"
+					}
+					systemcomponent
+					{
+						type = approval
+						approval status = completed
+						displayname = "Completed Tasks"
+						icon = "design-todo"
+					}
+				}
+				section SharedAnalytics_Section
+				{
+					type = shared_user_report_section
+					displayname = "Reports"
+					icon = "business-chart-bar-33"
+				}
+			}
+			preference
+			{
+				icon
+				{
+					style = outline
+				}
+			}
+		}
+		customize
+		{
+			layout
+			{
+				theme = "theme_5"
+			}
+			font = "lato"
+			color options
+			{
+				color = "11"
+			}
+			logo
+			{
+				preference = "app_icon"
+				placement = "left"
+			}
+		}
+	}
+	phone
+	{
+		customize
+		{
+			layout = twocolumn
+			font = "default"
+			style = "1"
+			color options
+			{
+				color = chryslerpurple
+			}
+			logo
+			{
+				preference = "none"
+			}
+		}
+	}
+	tablet
+	{
+		customize
+		{
+			layout = slidingpane
+			font = "default"
+			style = "1"
+			color options
+			{
+				color = darkgrey
+			}
+			logo
+			{
+				preference = "none"
+			}
+		}
+	}
+	translation
+{
+{"Language_Settings":{"LANGAGUE_WITH_LOGIN":"browser"}}
+}
+	reports configuration
+	{
+	
+		Version = 2000057062083
+		Key     = "JSjHYqjz7tKqyhNzk9b4UNnse53KXgVaqUOj7AYCNPDfdPQE2RXmQG6w3RFxsgFkCCmY5whNV1Ag7BuSNs5PsjQx2J6e5stDBZMG"
+	}
+}
